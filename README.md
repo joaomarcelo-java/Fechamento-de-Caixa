@@ -1,6 +1,6 @@
 # 💰 Sistema de Fechamento de Caixa
 
-Sistema desktop desenvolvido em C# com Windows Forms para automatizar e padronizar o processo de fechamento de caixa diário.
+Sistema desktop desenvolvido em C# com Windows Forms para automatizar e padronizar o processo de fechamento de caixa diário de motoqueiros em um restaurante de delivery.
 
 ## 📌 Sobre o Projeto
 
@@ -25,10 +25,8 @@ Projeto desenvolvido como aplicação prática dos conceitos de Programação Or
 ## 🏗️ Arquitetura do Projeto
 
 O sistema foi estruturado seguindo o princípio de separação de responsabilidades:
-FechamentoDeCaixa
-├── FechamentoCaixa (Core - regras de negócio)
-├── FechamentoCaixaForms (Interface gráfica)
-└── FechamentoCaixa.sln
+
+FechamentoDeCaixa->FechamentoCaixa (Core - regras de negócio)->FechamentoCaixaForms (Interface gráfica)
 
 
 ### 🔹 Core

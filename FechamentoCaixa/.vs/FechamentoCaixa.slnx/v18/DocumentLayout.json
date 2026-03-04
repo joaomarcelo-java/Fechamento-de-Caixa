@@ -1,0 +1,134 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\User\\source\\repos\\FechamentoCaixa\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{F9698854-4763-6274-039A-ECA116F504EF}|FechamentoCaixa.csproj|c:\\users\\user\\source\\repos\\fechamentocaixa\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F9698854-4763-6274-039A-ECA116F504EF}|FechamentoCaixa.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F9698854-4763-6274-039A-ECA116F504EF}|FechamentoCaixa.csproj|c:\\users\\user\\source\\repos\\fechamentocaixa\\entities\\fechamentodia.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F9698854-4763-6274-039A-ECA116F504EF}|FechamentoCaixa.csproj|solutionrelative:entities\\fechamentodia.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F9698854-4763-6274-039A-ECA116F504EF}|FechamentoCaixa.csproj|c:\\users\\user\\source\\repos\\fechamentocaixa\\service\\fechamentofinalservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F9698854-4763-6274-039A-ECA116F504EF}|FechamentoCaixa.csproj|solutionrelative:service\\fechamentofinalservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F9698854-4763-6274-039A-ECA116F504EF}|FechamentoCaixa.csproj|c:\\users\\user\\source\\repos\\fechamentocaixa\\database\\gerenciadordatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F9698854-4763-6274-039A-ECA116F504EF}|FechamentoCaixa.csproj|solutionrelative:database\\gerenciadordatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F9698854-4763-6274-039A-ECA116F504EF}|FechamentoCaixa.csproj|c:\\users\\user\\source\\repos\\fechamentocaixa\\service\\fechamentodiaservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F9698854-4763-6274-039A-ECA116F504EF}|FechamentoCaixa.csproj|solutionrelative:service\\fechamentodiaservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F9698854-4763-6274-039A-ECA116F504EF}|FechamentoCaixa.csproj|c:\\users\\user\\source\\repos\\fechamentocaixa\\entities\\fechamentofinal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F9698854-4763-6274-039A-ECA116F504EF}|FechamentoCaixa.csproj|solutionrelative:entities\\fechamentofinal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F9698854-4763-6274-039A-ECA116F504EF}|FechamentoCaixa.csproj|c:\\users\\user\\source\\repos\\fechamentocaixa\\entities\\motoqueiro.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F9698854-4763-6274-039A-ECA116F504EF}|FechamentoCaixa.csproj|solutionrelative:entities\\motoqueiro.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 6,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "GerenciadorDatabase.cs",
+              "DocumentMoniker": "C:\\Users\\User\\source\\repos\\FechamentoCaixa\\DataBase\\GerenciadorDatabase.cs",
+              "RelativeDocumentMoniker": "DataBase\\GerenciadorDatabase.cs",
+              "ToolTip": "C:\\Users\\User\\source\\repos\\FechamentoCaixa\\DataBase\\GerenciadorDatabase.cs",
+              "RelativeToolTip": "DataBase\\GerenciadorDatabase.cs",
+              "ViewState": "AgIAAHkAAAAAAAAAAAAYwI0AAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-28T23:34:02.874Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "FechamentoDiaService.cs",
+              "DocumentMoniker": "C:\\Users\\User\\source\\repos\\FechamentoCaixa\\Service\\FechamentoDiaService.cs",
+              "RelativeDocumentMoniker": "Service\\FechamentoDiaService.cs",
+              "ToolTip": "C:\\Users\\User\\source\\repos\\FechamentoCaixa\\Service\\FechamentoDiaService.cs",
+              "RelativeToolTip": "Service\\FechamentoDiaService.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAA4AAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-28T23:31:01.377Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "FechamentoDia.cs",
+              "DocumentMoniker": "C:\\Users\\User\\source\\repos\\FechamentoCaixa\\Entities\\FechamentoDia.cs",
+              "RelativeDocumentMoniker": "Entities\\FechamentoDia.cs",
+              "ToolTip": "C:\\Users\\User\\source\\repos\\FechamentoCaixa\\Entities\\FechamentoDia.cs",
+              "RelativeToolTip": "Entities\\FechamentoDia.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-28T23:27:35.957Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "FechamentoFinalService.cs",
+              "DocumentMoniker": "C:\\Users\\User\\source\\repos\\FechamentoCaixa\\Service\\FechamentoFinalService.cs",
+              "RelativeDocumentMoniker": "Service\\FechamentoFinalService.cs",
+              "ToolTip": "C:\\Users\\User\\source\\repos\\FechamentoCaixa\\Service\\FechamentoFinalService.cs",
+              "RelativeToolTip": "Service\\FechamentoFinalService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-28T23:31:28.435Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "FechamentoFinal.cs",
+              "DocumentMoniker": "C:\\Users\\User\\source\\repos\\FechamentoCaixa\\Entities\\FechamentoFinal.cs",
+              "RelativeDocumentMoniker": "Entities\\FechamentoFinal.cs",
+              "ToolTip": "C:\\Users\\User\\source\\repos\\FechamentoCaixa\\Entities\\FechamentoFinal.cs",
+              "RelativeToolTip": "Entities\\FechamentoFinal.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-28T23:26:25.557Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Motoqueiro.cs",
+              "DocumentMoniker": "C:\\Users\\User\\source\\repos\\FechamentoCaixa\\Entities\\Motoqueiro.cs",
+              "RelativeDocumentMoniker": "Entities\\Motoqueiro.cs",
+              "ToolTip": "C:\\Users\\User\\source\\repos\\FechamentoCaixa\\Entities\\Motoqueiro.cs",
+              "RelativeToolTip": "Entities\\Motoqueiro.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAA4AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-28T23:25:26.533Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\User\\source\\repos\\FechamentoCaixa\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\User\\source\\repos\\FechamentoCaixa\\Program.cs*",
+              "RelativeToolTip": "Program.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-28T23:20:58.183Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../FechamentoCaixa/FechamentoCaixa.csproj" />
+  <Project Path="FechamentoCaixaForms.csproj" />
+</Solution>

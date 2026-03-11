@@ -6,8 +6,6 @@ namespace FechamentoCaixaForms
     public partial class TelaCadastroMotoqueiro : Form
     {
         private readonly MotoqueiroService _motoqueiroService;
-        public Motoqueiro MotoqueiroCriado { get; private set; }
-
         public TelaCadastroMotoqueiro(MotoqueiroService motoqueiroService)
         {
             InitializeComponent();
@@ -24,7 +22,6 @@ namespace FechamentoCaixaForms
                     Extra = checkBoxExtra.Checked
                 };
                 _motoqueiroService.AdicionarMotoqueiro(Moto);
-                MotoqueiroCriado = Moto;
                 MessageBox.Show("Motoqueiro salvo com sucesso!");
             }
             catch (Exception ex)

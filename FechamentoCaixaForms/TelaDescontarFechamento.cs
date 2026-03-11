@@ -8,6 +8,18 @@ using System.Windows.Forms;
 
 namespace FechamentoCaixaForms
 {
+    /*
+        Plano (pseudocódigo detalhado):
+        - Problema: Analisador aponta CA1822 para o método 'AplicarSelectAll' indicando que ele não acessa dados da instância.
+        - Verificação: examinar o método; ele apenas usa o parâmetro 'parent' e propriedades locais de controles, sem acessar campos/propiedades de instância.
+        - Solução: marcar o método como 'static' para atender à sugestão do analisador e evitar o aviso CA1822.
+        - Impacto: chamadas existentes como 'AplicarSelectAll(this)' continuam funcionando; o método faz recursão chamando a si mesmo (agora estático) sem mudanças adicionais.
+        - Passos a aplicar no código:
+          1. Alterar assinatura de 'private void AplicarSelectAll(Control parent)' para 'private static void AplicarSelectAll(Control parent)'.
+          2. Garantir que o método não use membros de instância (já confirmado).
+          3. Compilar/testar para garantir que nenhuma chamada dependa de estado de instância.
+        */
+
     public partial class TelaDescontarFechamento : Form
     {
         public decimal ValorDescontarVale { get; private set; }
@@ -23,19 +35,20 @@ namespace FechamentoCaixaForms
 
 
 
+
         public TelaDescontarFechamento(List<ResumoFechamento> resumo, MotoqueiroService motoqueiroService)
         {
             InitializeComponent();
             numericDescontoVale.Value = 0;
             numericDescontoExtra.Value = 0;
             AplicarSelectAll(this);
-            btnConfirmar.Click += BtnConfirmar_Click;
+
 
             _motoqueiroService = motoqueiroService;
             _resumo = resumo;
             configuraMotoqueiroAtual();
         }
-        private void AplicarSelectAll(Control parent)
+        private static void AplicarSelectAll(Control parent)
         {
             foreach (Control control in parent.Controls)
             {
@@ -59,9 +72,9 @@ namespace FechamentoCaixaForms
             }
         }
 
-        private void BtnConfirmar_Click(object sender, EventArgs e)
+        private void btnConfirmar_Click(object sender, EventArgs e)
         {
-            if(_contadorResumo < _tamanhoResumo)
+            if (_contadorResumo < _tamanhoResumo)
             {
                 MessageBox.Show("Ainda existem motoqueiros em aberto..", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
@@ -70,7 +83,7 @@ namespace FechamentoCaixaForms
             {
                 this.DialogResult = DialogResult.OK;
             }
-                
+
         }
         private void btnProximoMotoqueiro_Click(object sender, EventArgs e)
         {
@@ -85,8 +98,6 @@ namespace FechamentoCaixaForms
                 decimal valorTotalDescontado = valorValeDescontado + numericDescontoExtra.Value;
                 var motoqueiroVale = _motoqueiroService.ObterValeMotoqueiro(_motoqueiroId);
 
-                //
-
                 if (valorTotalDescontado > _resumo[_contadorResumo].TotalGeral)
                 {
                     decimal valorRestanteVale = valorTotalDescontado - _resumo[_contadorResumo].TotalGeral;
@@ -99,9 +110,9 @@ namespace FechamentoCaixaForms
                         return;
                     }
                 }
-                else 
-                { 
-                _motoqueiroService.RemoverValeMotoqueiro(_motoqueiroId, numericDescontoVale.Value);
+                else
+                {
+                    _motoqueiroService.RemoverValeMotoqueiro(_motoqueiroId, numericDescontoVale.Value);
                 }
                 FechamentoFinalItem item = new FechamentoFinalItem
                 {
@@ -139,17 +150,17 @@ namespace FechamentoCaixaForms
                 numericDescontoExtra.Enabled = false;
                 return;
             }
-            if(_resumo.Count == 0)
+            if (_resumo.Count == 0)
             {
                 MessageBox.Show("Não existem motoqueiros nesse fechamento.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
-            var resumoAtual = _resumo[_contadorResumo]; 
+            var resumoAtual = _resumo[_contadorResumo];
             _motoqueiroId = resumoAtual.MotoqueiroId;
             labelMotoqueiro.Text = $"Motoqueiro: {resumoAtual.Motoqueiro}";
             labelValeMotoqueiro.Text = $"Vale atual: {_motoqueiroService.ObterValeMotoqueiro(_motoqueiroId):C}";
             labelValorTotalFechado.Text = $"Valor Total Fechado: {resumoAtual.TotalGeral:C}";
-            
+
         }
 
 

@@ -357,13 +357,6 @@
         private DateTimePicker dateTimePicker1;
 
         private DataGridView dgvFechamentoDia;
-        private DataGridViewTextBoxColumn Motoqueiro;
-        private DataGridViewTextBoxColumn Taxa5;
-        private DataGridViewTextBoxColumn Taxa7;
-        private DataGridViewTextBoxColumn Taxa10;
-        private DataGridViewTextBoxColumn Fixo;
-        private DataGridViewTextBoxColumn Descontos;
-        private DataGridViewTextBoxColumn Total;
         private Panel panelLateral;
         private Button btnFechamentosDiarios;
         private Panel panelMenuFechamentos;

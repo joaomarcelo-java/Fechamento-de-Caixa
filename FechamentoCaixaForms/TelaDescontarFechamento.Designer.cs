@@ -118,6 +118,7 @@
             btnConfirmar.ForeColor = Color.White;
             btnConfirmar.Location = new Point(103, 301);
             btnConfirmar.Name = "btnConfirmar";
+            btnConfirmar.Click += btnConfirmar_Click;
             btnConfirmar.Size = new Size(197, 32);
             btnConfirmar.TabIndex = 8;
             btnConfirmar.Text = "Salvar Fechamento";

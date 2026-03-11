@@ -114,6 +114,13 @@ namespace FechamentoCaixa.Service
             _db.RemoveVale(idMotoqueiro, valor);
         }
 
+        public void SetValeMotoqueiro(int idMotoqueiro, decimal valor)
+        {
+            if (valor < 0)
+                throw new ValeValorNegativoException();
+            _db.SetVale(idMotoqueiro, valor);
+        }
+
         // =========================
         // ENTREGAS
         // =========================

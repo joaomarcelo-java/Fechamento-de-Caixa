@@ -85,22 +85,24 @@ namespace FechamentoCaixaForms
                 decimal valorTotalDescontado = valorValeDescontado + numericDescontoExtra.Value;
                 var motoqueiroVale = _motoqueiroService.ObterValeMotoqueiro(_motoqueiroId);
 
-                //É para comparar se o valor total do desconto é maior que valor fechado da semana, e see o valor a ser descontado é maior do que o vale do motoqueiro
+                //
 
-                if(valorValeDescontado > motoqueiroVale)
+                if (valorTotalDescontado > _resumo[_contadorResumo].TotalGeral)
                 {
-                    MessageBox.Show("O valor do vale descontado não pode ser maior que o vale do motoqueiro.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
+                    decimal valorRestanteVale = valorTotalDescontado - _resumo[_contadorResumo].TotalGeral;
+                    if (MessageBox.Show($"O valor total a ser descontado de {valorTotalDescontado:C} é maior do que o valor final fechado pelo motoqueiro ({_resumo[_contadorResumo].TotalGeral:C}). Deseja descontar o valor feito pelo motoqueiro do vale e deixar {valorRestanteVale:C} de vale?", "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+                    {
+                        _motoqueiroService.SetValeMotoqueiro(_motoqueiroId, valorRestanteVale);
+                    }
+                    else
+                    {
+                        return;
+                    }
                 }
-                if(valorTotalDescontado > _resumo[_contadorResumo].TotalGeral)
-                {
-                    MessageBox.Show("O valor total do desconto não pode ser maior que o valor total fechado da semana.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
+                else 
+                { 
                 _motoqueiroService.RemoverValeMotoqueiro(_motoqueiroId, numericDescontoVale.Value);
-
-
+                }
                 FechamentoFinalItem item = new FechamentoFinalItem
                 {
                     MotoqueiroId = _motoqueiroId,

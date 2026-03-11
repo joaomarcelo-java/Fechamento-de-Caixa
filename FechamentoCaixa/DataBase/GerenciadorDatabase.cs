@@ -155,6 +155,13 @@ namespace FechamentoCaixa.DataBase
             SaveChanges();
         }
 
+        public void SetVale(int idMotoqueiro, decimal valor)
+        {
+            var motoqueiro = Motoqueiros.FirstOrDefault(m => m.Id == idMotoqueiro);
+            motoqueiro.Vale = valor;
+            SaveChanges();
+        }
+
         #endregion
 
         #region ===================== FECHAMENTO DIA =====================

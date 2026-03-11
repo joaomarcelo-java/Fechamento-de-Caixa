@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FechamentoCaixa")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dc4e9449446fc77fa569c4f54727e450e87c5fdc")]
 [assembly: System.Reflection.AssemblyProductAttribute("FechamentoCaixa")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FechamentoCaixa")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

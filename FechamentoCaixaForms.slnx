@@ -1,4 +1,7 @@
 <Solution>
-  <Project Path="../FechamentoCaixa/FechamentoCaixa.csproj" />
-  <Project Path="FechamentoCaixaForms.csproj" />
+  <Folder Name="/Itens de Solução/">
+    <File Path=".gitignore" />
+  </Folder>
+  <Project Path="FechamentoCaixa/FechamentoCaixa.csproj" />
+  <Project Path="FechamentoCaixaForms/FechamentoCaixaForms.csproj" />
 </Solution>

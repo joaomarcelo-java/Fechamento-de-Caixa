@@ -105,8 +105,6 @@ namespace FechamentoCaixaForms
 
             if (tela.ShowDialog() == DialogResult.OK)
                 CarregarFechamentoDia();
-                var backupDb = new BackupService();
-                backupDb.CriarBackup();
 
         }
 
@@ -122,8 +120,6 @@ namespace FechamentoCaixaForms
             var motoService = new MotoqueiroService(db);
 
             new TelaFecharSemana(fechamentoFinal, motoService).ShowDialog();
-            var backupDb = new BackupService();
-            backupDb.CriarBackup();
         }
 
         private void btnVales_Click(object sender, EventArgs e)
@@ -227,6 +223,11 @@ namespace FechamentoCaixaForms
                     Font = new Font("Segoe UI", 9, FontStyle.Bold)
                 }
             });
+        }
+        private void TelaInicial_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            using var db = new GerenciadorDatabase();
+            db.CriarBackup();
         }
     }
 }

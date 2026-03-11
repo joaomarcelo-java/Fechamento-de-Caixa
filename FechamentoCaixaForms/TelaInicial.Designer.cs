@@ -330,6 +330,7 @@
             Name = "TelaInicial";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Fechamento de Caixa";
+            FormClosing += TelaInicial_FormClosing;
             panelMenuMotoqueiros.ResumeLayout(false);
             panelLateral.ResumeLayout(false);
             panelMenuFechamentosFinais.ResumeLayout(false);

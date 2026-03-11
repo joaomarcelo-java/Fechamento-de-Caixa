@@ -1,6 +1,7 @@
 ﻿using FechamentoCaixa.Entities;
 using FechamentoCaixa.ViewModel;
 using FechamentoCaixa.ViewModels;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 namespace FechamentoCaixa.DataBase
@@ -51,12 +52,46 @@ namespace FechamentoCaixa.DataBase
                                d => DateOnly.Parse(d))
                 .HasColumnType("TEXT");
         }
+        public bool CriarBackup()
+            {
+                try
+                {
+                    string pastaBackup = Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                        "Fechamentos Finais",
+                        "Backups"
+                    );
+
+                    if (!Directory.Exists(pastaBackup))
+                        Directory.CreateDirectory(pastaBackup);
+
+                    string caminhoBackup = Path.Combine(
+                        pastaBackup,
+                        $"backup_{DateTime.Now:yyyy-MM-dd}.db"
+                    );
+
+                    using (var connection = new SqliteConnection("Data Source=fechamento.db"))
+                    {
+                        connection.Open();
+
+                        var command = connection.CreateCommand();
+                        command.CommandText = $"VACUUM INTO '{caminhoBackup}'";
+                        command.ExecuteNonQuery();
+                    }
+
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
 
         #endregion
 
-        #region ===================== MOTOQUEIROS =====================
+    #region ===================== MOTOQUEIROS =====================
 
-        public bool AddMotoqueiro(Motoqueiro motoqueiro)
+    public bool AddMotoqueiro(Motoqueiro motoqueiro)
         {
             try
             {

@@ -3,3 +3,7 @@ obj/
 .vs/
 *.user
 *.suo
+*.db
+*.sqlite
+*.db-shm
+*.db-wal

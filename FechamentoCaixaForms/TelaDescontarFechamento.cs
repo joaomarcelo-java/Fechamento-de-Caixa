@@ -3,166 +3,215 @@ using FechamentoCaixa.Service;
 using FechamentoCaixa.ViewModels;
 using FechamentoCaixa.Exceptions;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
 namespace FechamentoCaixaForms
 {
-    /*
-        Plano (pseudocódigo detalhado):
-        - Problema: Analisador aponta CA1822 para o método 'AplicarSelectAll' indicando que ele não acessa dados da instância.
-        - Verificação: examinar o método; ele apenas usa o parâmetro 'parent' e propriedades locais de controles, sem acessar campos/propiedades de instância.
-        - Solução: marcar o método como 'static' para atender à sugestão do analisador e evitar o aviso CA1822.
-        - Impacto: chamadas existentes como 'AplicarSelectAll(this)' continuam funcionando; o método faz recursão chamando a si mesmo (agora estático) sem mudanças adicionais.
-        - Passos a aplicar no código:
-          1. Alterar assinatura de 'private void AplicarSelectAll(Control parent)' para 'private static void AplicarSelectAll(Control parent)'.
-          2. Garantir que o método não use membros de instância (já confirmado).
-          3. Compilar/testar para garantir que nenhuma chamada dependa de estado de instância.
-        */
-
     public partial class TelaDescontarFechamento : Form
     {
         public decimal ValorDescontarVale { get; private set; }
         public decimal DescontoExtra { get; private set; }
+        public List<FechamentoFinalItem> fechamentoFinalItems { get; } = new List<FechamentoFinalItem>();
 
         private readonly MotoqueiroService _motoqueiroService;
-        private int _motoqueiroId;
-
         private readonly List<ResumoFechamento> _resumo;
+
+        private int _motoqueiroId;
         private int _contadorResumo = 0;
+
         private int _tamanhoResumo => _resumo.Count - 1;
-        public List<FechamentoFinalItem> fechamentoFinalItems = new List<FechamentoFinalItem>();
-
-
-
+        private bool TodosProcessados => _contadorResumo > _tamanhoResumo;
 
         public TelaDescontarFechamento(List<ResumoFechamento> resumo, MotoqueiroService motoqueiroService)
         {
             InitializeComponent();
-            numericDescontoVale.Value = 0;
-            numericDescontoExtra.Value = 0;
+
+            _motoqueiroService = motoqueiroService ?? throw new ArgumentNullException(nameof(motoqueiroService));
+            _resumo = resumo ?? throw new ArgumentNullException(nameof(resumo));
+
+            ResetarNumericos();
             AplicarSelectAll(this);
-
-
-            _motoqueiroService = motoqueiroService;
-            _resumo = resumo;
             configuraMotoqueiroAtual();
         }
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            base.OnFormClosing(e);
+
+            if (this.DialogResult == DialogResult.OK)
+                return;
+
+            if (!TodosProcessados)
+            {
+                MessageBox.Show(
+                    "Não é possível fechar. Ainda existem motoqueiros em aberto.",
+                    "Atenção",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+                e.Cancel = true;
+            }
+        }
+        private void btnConfirmar_Click(object sender, EventArgs e)
+        {
+            if (!TodosProcessados)
+            {
+                MessageBox.Show(
+                    "Ainda existem motoqueiros em aberto.",
+                    "Atenção",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+                return;
+            }
+
+            this.DialogResult = DialogResult.OK;
+        }
+
+        private void btnProximoMotoqueiro_Click(object sender, EventArgs e)
+        {
+            if (TodosProcessados)
+            {
+                MessageBox.Show(
+                    "Não existem mais motoqueiros nesse fechamento.",
+                    "Atenção",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+                return;
+            }
+
+            try
+            {
+                ProcessarMotoqueiroAtual();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        private void ProcessarMotoqueiroAtual()
+        {
+            var resumoAtual = _resumo[_contadorResumo];
+            decimal valorVale = numericDescontoVale.Value;
+            decimal valorExtra = numericDescontoExtra.Value;
+            decimal valorTotalDescontado = valorVale + valorExtra;
+
+            if (!TentarAplicarDesconto(resumoAtual, valorTotalDescontado, valorVale))
+                return;
+
+            var item = CriarFechamentoFinalItem(resumoAtual, valorVale, valorExtra, valorTotalDescontado);
+            fechamentoFinalItems.Add(item);
+
+            _contadorResumo++;
+            configuraMotoqueiroAtual();
+        }
+
+        private bool TentarAplicarDesconto(ResumoFechamento resumoAtual, decimal valorTotalDescontado, decimal valorVale)
+        {
+            if (valorTotalDescontado <= resumoAtual.TotalGeral)
+            {
+                _motoqueiroService.RemoverValeMotoqueiro(_motoqueiroId, valorVale);
+                return true;
+            }
+
+            decimal valorRestanteVale = valorTotalDescontado - resumoAtual.TotalGeral;
+            string mensagem = $"O valor a descontar ({valorTotalDescontado:C}) é maior que o total fechado " +
+                              $"({resumoAtual.TotalGeral:C}). Deseja descontar o valor do motoqueiro do vale " +
+                              $"e manter {valorRestanteVale:C} de saldo restante no vale?";
+
+            var resposta = MessageBox.Show(mensagem, "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+            if (resposta == DialogResult.Yes)
+            {
+                _motoqueiroService.SetValeMotoqueiro(_motoqueiroId, valorRestanteVale);
+                return true;
+            }
+
+            return false;
+        }
+
+        private FechamentoFinalItem CriarFechamentoFinalItem(
+            ResumoFechamento resumo,
+            decimal valorVale,
+            decimal valorExtra,
+            decimal valorTotalDescontado)
+        {
+            return new FechamentoFinalItem
+            {
+                MotoqueiroId = _motoqueiroId,
+                Taxa5 = resumo.Taxa5,
+                Taxa7 = resumo.Taxa7,
+                Taxa10 = resumo.Taxa10,
+                ValeDescontado = valorVale,
+                DescontoExtra = valorExtra,
+                TotalFixo = resumo.TotalFixo,
+                TotalBruto = resumo.TotalGeral,
+                TotalLiquido = resumo.TotalGeral - valorTotalDescontado
+            };
+        }
+
+        private void configuraMotoqueiroAtual()
+        {
+            ResetarNumericos();
+
+            if (_resumo.Count == 0)
+            {
+                MessageBox.Show(
+                    "Não existem motoqueiros nesse fechamento.",
+                    "Atenção",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+                return;
+            }
+
+            if (TodosProcessados)
+            {
+                MessageBox.Show(
+                    "Não existem mais motoqueiros nesse fechamento.",
+                    "Atenção",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+                DesabilitarNumericos();
+                return;
+            }
+
+            var resumoAtual = _resumo[_contadorResumo];
+            _motoqueiroId = resumoAtual.MotoqueiroId;
+
+            labelMotoqueiro.Text = $"Motoqueiro: {resumoAtual.Motoqueiro}";
+            labelValeMotoqueiro.Text = $"Vale atual: {_motoqueiroService.ObterValeMotoqueiro(_motoqueiroId):C}";
+            labelValorTotalFechado.Text = $"Valor Total Fechado: {resumoAtual.TotalGeral:C}";
+        }
+
+        private void ResetarNumericos()
+        {
+            numericDescontoVale.Value = 0;
+            numericDescontoExtra.Value = 0;
+        }
+
+        private void DesabilitarNumericos()
+        {
+            numericDescontoVale.Enabled = false;
+            numericDescontoExtra.Enabled = false;
+        }
+
         private static void AplicarSelectAll(Control parent)
         {
             foreach (Control control in parent.Controls)
             {
                 if (control is TextBox txt)
-                {
                     txt.Enter += (s, e) => txt.SelectAll();
-                }
 
                 if (control is NumericUpDown numeric)
-                {
-                    numeric.Enter += (s, e) =>
-                    {
-                        numeric.Select(0, numeric.Text.Length);
-                    };
-                }
+                    numeric.Enter += (s, e) => numeric.Select(0, numeric.Text.Length);
 
                 if (control.HasChildren)
-                {
                     AplicarSelectAll(control);
-                }
             }
         }
-
-        private void btnConfirmar_Click(object sender, EventArgs e)
-        {
-            if (_contadorResumo < _tamanhoResumo)
-            {
-                MessageBox.Show("Ainda existem motoqueiros em aberto..", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-            else
-            {
-                this.DialogResult = DialogResult.OK;
-            }
-
-        }
-        private void btnProximoMotoqueiro_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (_contadorResumo > _tamanhoResumo)
-                {
-                    MessageBox.Show("Não existem mais motoqueiros nesse fechamento.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
-                decimal valorValeDescontado = numericDescontoVale.Value;
-                decimal valorTotalDescontado = valorValeDescontado + numericDescontoExtra.Value;
-                var motoqueiroVale = _motoqueiroService.ObterValeMotoqueiro(_motoqueiroId);
-
-                if (valorTotalDescontado > _resumo[_contadorResumo].TotalGeral)
-                {
-                    decimal valorRestanteVale = valorTotalDescontado - _resumo[_contadorResumo].TotalGeral;
-                    if (MessageBox.Show($"O valor total a ser descontado de {valorTotalDescontado:C} é maior do que o valor final fechado pelo motoqueiro ({_resumo[_contadorResumo].TotalGeral:C}). Deseja descontar o valor feito pelo motoqueiro do vale e deixar {valorRestanteVale:C} de vale?", "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
-                    {
-                        _motoqueiroService.SetValeMotoqueiro(_motoqueiroId, valorRestanteVale);
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
-                else
-                {
-                    _motoqueiroService.RemoverValeMotoqueiro(_motoqueiroId, numericDescontoVale.Value);
-                }
-                FechamentoFinalItem item = new FechamentoFinalItem
-                {
-                    MotoqueiroId = _motoqueiroId,
-                    Taxa5 = _resumo[_contadorResumo].Taxa5,
-                    Taxa7 = _resumo[_contadorResumo].Taxa7,
-                    Taxa10 = _resumo[_contadorResumo].Taxa10,
-                    ValeDescontado = numericDescontoVale.Value,
-                    DescontoExtra = numericDescontoExtra.Value,
-                    TotalFixo = _resumo[_contadorResumo].TotalFixo,
-                    TotalBruto = _resumo[_contadorResumo].TotalGeral,
-                    TotalLiquido = _resumo[_contadorResumo].TotalGeral - valorTotalDescontado
-                };
-                fechamentoFinalItems.Add(item);
-                _contadorResumo++;
-                configuraMotoqueiroAtual();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-        }
-        private void configuraMotoqueiroAtual()
-        {
-            numericDescontoVale.Value = 0;
-            numericDescontoExtra.Value = 0;
-            if (_contadorResumo > _tamanhoResumo)
-            {
-                MessageBox.Show("Não existem mais motoqueiros nesse fechamento.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                numericDescontoExtra.Value = 0;
-                numericDescontoVale.Value = 0;
-
-                numericDescontoVale.Enabled = false;
-                numericDescontoExtra.Enabled = false;
-                return;
-            }
-            if (_resumo.Count == 0)
-            {
-                MessageBox.Show("Não existem motoqueiros nesse fechamento.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-            var resumoAtual = _resumo[_contadorResumo];
-            _motoqueiroId = resumoAtual.MotoqueiroId;
-            labelMotoqueiro.Text = $"Motoqueiro: {resumoAtual.Motoqueiro}";
-            labelValeMotoqueiro.Text = $"Vale atual: {_motoqueiroService.ObterValeMotoqueiro(_motoqueiroId):C}";
-            labelValorTotalFechado.Text = $"Valor Total Fechado: {resumoAtual.TotalGeral:C}";
-
-        }
-
-
     }
 }

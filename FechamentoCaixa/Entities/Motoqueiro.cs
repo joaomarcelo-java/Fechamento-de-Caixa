@@ -12,6 +12,7 @@ namespace FechamentoCaixa.Entities
         public string Nome { get; set; } = string.Empty;
         public decimal Vale { get; set; } 
         public bool Extra { get; set; } 
+        public List<Vales> Vales { get; set; }
         public Motoqueiro() { }
         public Motoqueiro(string nome, decimal vale, bool extra)
         {

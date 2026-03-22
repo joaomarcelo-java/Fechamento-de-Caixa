@@ -12,10 +12,12 @@ namespace FechamentoCaixaForms
     {
         private readonly FechamentoFinalService _fechamentoFinalService;
         private readonly MotoqueiroService _motoqueiroService;
-        public TelaFecharSemana(FechamentoFinalService fechamentoFinalService, MotoqueiroService motoqueiroService)
+        private readonly ValesService _valesService;
+        public TelaFecharSemana(FechamentoFinalService fechamentoFinalService, MotoqueiroService motoqueiroService, ValesService valesService)
         {
             _fechamentoFinalService = fechamentoFinalService;
             _motoqueiroService = motoqueiroService;   
+            _valesService = valesService;
             InitializeComponent();
         }
 
@@ -118,7 +120,7 @@ namespace FechamentoCaixaForms
                 var resumo = _fechamentoFinalService.ObterFechamentosPeriodo(inicio, final);
                 _fechamentoFinalService.VerificarFechamentoExistente(inicio, final);
                 
-                var tela = new TelaDescontarFechamento(resumo, _motoqueiroService);
+                var tela = new TelaDescontarFechamento(resumo, _motoqueiroService, _valesService);
                 tela.ShowDialog();
                 var itens = tela.fechamentoFinalItems;
 

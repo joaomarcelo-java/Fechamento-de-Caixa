@@ -10,10 +10,12 @@ namespace FechamentoCaixaForms
     public partial class TelaBuscarMotoqueiro : Form
     {
         private readonly MotoqueiroService _motoqueiroService;
+        private readonly ValesService _valesService;
 
-        public TelaBuscarMotoqueiro(MotoqueiroService motoqueiroService)
+        public TelaBuscarMotoqueiro(MotoqueiroService motoqueiroService, ValesService valesService)
         {
             _motoqueiroService = motoqueiroService;
+            _valesService = valesService;
             InitializeComponent();
             CarregarMotoqueiros();
         }
@@ -51,7 +53,7 @@ namespace FechamentoCaixaForms
                 $"Total Fixo Ganho: R$ {totalFixo:N2}";
 
             labelValeAtual.Text =
-                $"Vale Atual: R$ {motoqueiro.Vale:N2}";
+                $"Vale Atual: R$ {_valesService.GetSaldoTotalValesMotoqueiro(motoqueiro.Id):N2}";
         }
     }
 }

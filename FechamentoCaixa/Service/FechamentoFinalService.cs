@@ -10,11 +10,13 @@ namespace FechamentoCaixa.Service
     {
         private readonly GerenciadorDatabase _db;
         private readonly MotoqueiroService _motoqueiroService;
+        private readonly ValesService _valesService;
 
         public FechamentoFinalService(GerenciadorDatabase db)
         {
             _db = db;
             _motoqueiroService = new MotoqueiroService(_db);
+            _valesService = new ValesService(_db);
         }
 
         // =====================================================
@@ -68,7 +70,7 @@ namespace FechamentoCaixa.Service
             if ((descontoExtra + valeDescontado) > resumo.TotalGeral)
                 throw new ValorMaiorQueTotalException();
 
-            _motoqueiroService.RemoverValeMotoqueiro(
+            _valesService.RemoveValeMotoqueiro(
                 resumo.MotoqueiroId,
                 valeDescontado);
 

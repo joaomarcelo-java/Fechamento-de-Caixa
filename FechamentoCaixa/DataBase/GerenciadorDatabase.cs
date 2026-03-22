@@ -3,6 +3,7 @@ using FechamentoCaixa.ViewModel;
 using FechamentoCaixa.ViewModels;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace FechamentoCaixa.DataBase
 {
@@ -11,6 +12,7 @@ namespace FechamentoCaixa.DataBase
         #region DbSets
 
         public DbSet<Motoqueiro> Motoqueiros { get; set; }
+        public DbSet<Vales> Vales { get; set; }
         public DbSet<FechamentoDia> FechamentosDia { get; set; }
         public DbSet<FechamentoFinal> FechamentosFinais { get; set; }
 
@@ -18,9 +20,45 @@ namespace FechamentoCaixa.DataBase
 
         #region Configuração
 
+
+        //Configuração Temporaria, apagar depois de implementar
+        private void MigrarValesAntigos()
+        {
+            Database.ExecuteSqlRaw(@"
+        CREATE TABLE IF NOT EXISTS Vales (
+            Id INTEGER PRIMARY KEY AUTOINCREMENT,
+            MotoqueiroId INTEGER NOT NULL,
+            Valor TEXT NOT NULL,
+            Descricao TEXT NOT NULL,
+            Valido INTEGER NOT NULL,
+            Data TEXT NOT NULL,
+            FOREIGN KEY (MotoqueiroId) REFERENCES Motoqueiros(Id)
+        );
+    ");
+
+            var motoqueirosComVale = Motoqueiros
+                .Include(m => m.Vales)
+                .Where(m => m.Vale > 0 && !m.Vales.Any())
+                .ToList();
+
+            foreach (var motoqueiro in motoqueirosComVale)
+            {
+                motoqueiro.Vales.Add(new Vales
+                {
+                    MotoqueiroId = motoqueiro.Id,
+                    Valor = motoqueiro.Vale,
+                    Descricao = "Vale migrado",
+                    Valido = true,
+                    Data = DateOnly.FromDateTime(DateTime.Now)
+                });
+            }
+
+            SaveChanges();
+        }
         public GerenciadorDatabase()
         {
             Database.EnsureCreated();
+            MigrarValesAntigos();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
@@ -51,6 +89,11 @@ namespace FechamentoCaixa.DataBase
                 .HasConversion(d => d.ToString("yyyy-MM-dd"),
                                d => DateOnly.Parse(d))
                 .HasColumnType("TEXT");
+
+            modelBuilder.Entity<Vales>()
+                .HasOne(v => v.Motoqueiro)
+                .WithMany(m => m.Vales)
+                .HasForeignKey(v => v.MotoqueiroId);
         }
         public bool CriarBackup()
             {
@@ -115,7 +158,6 @@ namespace FechamentoCaixa.DataBase
                     return false;
 
                 existente.Nome = novoMotoqueiro.Nome;
-                existente.Vale = novoMotoqueiro.Vale;
                 existente.Extra = novoMotoqueiro.Extra;
 
                 SaveChanges();
@@ -142,6 +184,13 @@ namespace FechamentoCaixa.DataBase
 
                 if (fechamentos.Any())
                     FechamentosDia.RemoveRange(fechamentos);
+
+                var vales = Vales
+                    .Where(v => v.MotoqueiroId == idMotoqueiro)
+                    .ToList();
+
+                if (vales.Any())
+                    Vales.RemoveRange(vales);
 
                 Motoqueiros.Remove(motoqueiro);
                 SaveChanges();
@@ -170,33 +219,51 @@ namespace FechamentoCaixa.DataBase
 
         #region ===================== VALES =====================
 
-        public decimal GetVale(int idMotoqueiro)
-            => Motoqueiros
-                .Where(m => m.Id == idMotoqueiro)
-                .Select(m => m.Vale)
-                .FirstOrDefault();
-
-        public void AddVale(int idMotoqueiro, decimal valor)
+        public List<Vales> GetValesAtivos(int idMotoqueiro)
         {
-            var motoqueiro = Motoqueiros.FirstOrDefault(m => m.Id == idMotoqueiro);
-            motoqueiro.Vale += valor;
+            return Vales.Where(v => v.MotoqueiroId == idMotoqueiro && v.Valido).ToList();
+        }
+
+        public List<Vales> GetAllVales(int idMotoqueiro)
+        {
+            return Vales.Where(v => v.MotoqueiroId == idMotoqueiro).ToList();
+        }
+
+        public void AddVale(int idMotoqueiro, Vales valePassado) //Na chamada, passar valor, desc e data do vale
+        {
+            var vale = new Vales(valePassado.Valor, valePassado.Descricao, idMotoqueiro, true, valePassado.Data);
+            Vales.Add(vale);
             SaveChanges();
         }
 
-        public void RemoveVale(int idMotoqueiro, decimal valor)
+        public void RemoveVale(int idVale)
         {
-            var motoqueiro = Motoqueiros.FirstOrDefault(m => m.Id == idMotoqueiro);
-            motoqueiro.Vale -= valor;
+            var vale = Vales.Where(v => v.Id ==  idVale).FirstOrDefault();
+            vale.Descricao += $"\r\n[PAGO - {DateOnly.FromDateTime(DateTime.Now)}]";
+            vale.Valor = 0;
+            vale.Valido = false;
             SaveChanges();
         }
 
-        public void SetVale(int idMotoqueiro, decimal valor)
+        public void UpdateVale(int idVale, decimal novoValor, string addDesc)
         {
-            var motoqueiro = Motoqueiros.FirstOrDefault(m => m.Id == idMotoqueiro);
-            motoqueiro.Vale = valor;
+            var vale = Vales.Find(idVale);
+            vale.Valor = novoValor;
+            vale.Descricao += $"\r\n{addDesc}";
             SaveChanges();
         }
+        public decimal GetSaldoValesMotoqueiro(int idMotoqueiro)
+        {
+            return Vales
+                .Where(v => v.MotoqueiroId == idMotoqueiro && v.Valido)
+                .AsEnumerable()
+                .Sum(v => v.Valor);
+        }
 
+        public Vales GetValeById(int idVale)
+        {
+            return Vales.Find(idVale);
+        }
         #endregion
 
         #region ===================== FECHAMENTO DIA =====================

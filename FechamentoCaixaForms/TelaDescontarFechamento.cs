@@ -16,6 +16,7 @@ namespace FechamentoCaixaForms
         public List<FechamentoFinalItem> fechamentoFinalItems { get; } = new List<FechamentoFinalItem>();
 
         private readonly MotoqueiroService _motoqueiroService;
+        private readonly ValesService _valesService;
         private readonly List<ResumoFechamento> _resumo;
 
         private int _motoqueiroId;
@@ -24,10 +25,11 @@ namespace FechamentoCaixaForms
         private int _tamanhoResumo => _resumo.Count - 1;
         private bool TodosProcessados => _contadorResumo > _tamanhoResumo;
 
-        public TelaDescontarFechamento(List<ResumoFechamento> resumo, MotoqueiroService motoqueiroService)
+        public TelaDescontarFechamento(List<ResumoFechamento> resumo, MotoqueiroService motoqueiroService, ValesService valesService)
         {
             InitializeComponent();
 
+            _valesService = valesService;
             _motoqueiroService = motoqueiroService ?? throw new ArgumentNullException(nameof(motoqueiroService));
             _resumo = resumo ?? throw new ArgumentNullException(nameof(resumo));
 
@@ -110,26 +112,21 @@ namespace FechamentoCaixaForms
 
         private bool TentarAplicarDesconto(ResumoFechamento resumoAtual, decimal valorTotalDescontado, decimal valorVale)
         {
-            if (valorTotalDescontado <= resumoAtual.TotalGeral)
+            if (valorTotalDescontado > resumoAtual.TotalGeral)
             {
-                _motoqueiroService.RemoverValeMotoqueiro(_motoqueiroId, valorVale);
-                return true;
+                MessageBox.Show(
+                    $"O valor a descontar ({valorTotalDescontado:C}) é maior que o total fechado ({resumoAtual.TotalGeral:C}).",
+                    "Atenção",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+                return false;
             }
 
-            decimal valorRestanteVale = valorTotalDescontado - resumoAtual.TotalGeral;
-            string mensagem = $"O valor a descontar ({valorTotalDescontado:C}) é maior que o total fechado " +
-                              $"({resumoAtual.TotalGeral:C}). Deseja descontar o valor do motoqueiro do vale " +
-                              $"e manter {valorRestanteVale:C} de saldo restante no vale?";
+            if (valorVale > 0)
+                _valesService.RemoveValeMotoqueiro(_motoqueiroId, valorVale);
 
-            var resposta = MessageBox.Show(mensagem, "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-
-            if (resposta == DialogResult.Yes)
-            {
-                _motoqueiroService.SetValeMotoqueiro(_motoqueiroId, valorRestanteVale);
-                return true;
-            }
-
-            return false;
+            return true;
         }
 
         private FechamentoFinalItem CriarFechamentoFinalItem(
@@ -158,23 +155,13 @@ namespace FechamentoCaixaForms
 
             if (_resumo.Count == 0)
             {
-                MessageBox.Show(
-                    "Não existem motoqueiros nesse fechamento.",
-                    "Atenção",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information
-                );
+                MessageBox.Show("Não existem motoqueiros nesse fechamento.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
             if (TodosProcessados)
             {
-                MessageBox.Show(
-                    "Não existem mais motoqueiros nesse fechamento.",
-                    "Atenção",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information
-                );
+                MessageBox.Show("Não existem mais motoqueiros nesse fechamento.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 DesabilitarNumericos();
                 return;
             }
@@ -183,8 +170,17 @@ namespace FechamentoCaixaForms
             _motoqueiroId = resumoAtual.MotoqueiroId;
 
             labelMotoqueiro.Text = $"Motoqueiro: {resumoAtual.Motoqueiro}";
-            labelValeMotoqueiro.Text = $"Vale atual: {_motoqueiroService.ObterValeMotoqueiro(_motoqueiroId):C}";
             labelValorTotalFechado.Text = $"Valor Total Fechado: {resumoAtual.TotalGeral:C}";
+
+            try
+            {
+                decimal saldo = _valesService.GetSaldoTotalValesMotoqueiro(_motoqueiroId);
+                labelValeMotoqueiro.Text = $"Vale atual: {saldo:C}";
+            }
+            catch (MotoqueiroNaoPossuiVale)
+            {
+                labelValeMotoqueiro.Text = "Vale atual: R$ 0,00";
+            }
         }
 
         private void ResetarNumericos()

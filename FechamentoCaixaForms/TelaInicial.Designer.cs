@@ -26,6 +26,10 @@
             btnDeletarMotoqueiro = new Button();
             btnBuscarMotoqueiro = new Button();
             btnVales = new Button();
+            panelMenuVales = new Panel();
+            btnRemoverVale = new Button();
+            btnAdicionarVale = new Button();
+            btnVerificarVales = new Button();
             panelLateral = new Panel();
             panelMenuFechamentosFinais = new Panel();
             btnFechamentosFinais = new Button();
@@ -41,6 +45,7 @@
             dateTimePicker1 = new DateTimePicker();
             dgvFechamentoDia = new DataGridView();
             panelMenuMotoqueiros.SuspendLayout();
+            panelMenuVales.SuspendLayout();
             panelLateral.SuspendLayout();
             panelMenuFechamentosFinais.SuspendLayout();
             panelMenuFechamentos.SuspendLayout();
@@ -139,13 +144,56 @@
             btnVales.Location = new Point(0, 360);
             btnVales.Name = "btnVales";
             btnVales.Size = new Size(200, 40);
-            btnVales.TabIndex = 0;
+            btnVales.TabIndex = 2;
             btnVales.Text = "Vales";
             btnVales.Click += btnVales_Click;
+            // 
+            // panelMenuVales
+            // 
+            panelMenuVales.Controls.Add(btnRemoverVale);
+            panelMenuVales.Controls.Add(btnAdicionarVale);
+            panelMenuVales.Controls.Add(btnVerificarVales);
+            panelMenuVales.Dock = DockStyle.Top;
+            panelMenuVales.Location = new Point(0, 400);
+            panelMenuVales.Name = "panelMenuVales";
+            panelMenuVales.Size = new Size(200, 90);
+            panelMenuVales.TabIndex = 1;
+            panelMenuVales.Visible = false;
+            // 
+            // btnRemoverVale
+            // 
+            btnRemoverVale.Dock = DockStyle.Top;
+            btnRemoverVale.Location = new Point(0, 60);
+            btnRemoverVale.Name = "btnRemoverVale";
+            btnRemoverVale.Size = new Size(200, 30);
+            btnRemoverVale.TabIndex = 1;
+            btnRemoverVale.Text = "Remover Vale";
+            btnRemoverVale.Click += btnRemoverVale_Click;
+            // 
+            // btnAdicionarVale
+            // 
+            btnAdicionarVale.Dock = DockStyle.Top;
+            btnAdicionarVale.Location = new Point(0, 30);
+            btnAdicionarVale.Name = "btnAdicionarVale";
+            btnAdicionarVale.Size = new Size(200, 30);
+            btnAdicionarVale.TabIndex = 0;
+            btnAdicionarVale.Text = "Adicionar Vale";
+            btnAdicionarVale.Click += btnAdicionarVale_Click;
+            // 
+            // btnVerificarVales
+            // 
+            btnVerificarVales.Dock = DockStyle.Top;
+            btnVerificarVales.Location = new Point(0, 0);
+            btnVerificarVales.Name = "btnVerificarVales";
+            btnVerificarVales.Size = new Size(200, 30);
+            btnVerificarVales.TabIndex = 0;
+            btnVerificarVales.Text = "Verificar Vales";
+            btnVerificarVales.Click += btnVerificarVales_Click;
             // 
             // panelLateral
             // 
             panelLateral.BackColor = Color.Gainsboro;
+            panelLateral.Controls.Add(panelMenuVales);
             panelLateral.Controls.Add(btnVales);
             panelLateral.Controls.Add(panelMenuFechamentosFinais);
             panelLateral.Controls.Add(btnFechamentosFinais);
@@ -156,7 +204,7 @@
             panelLateral.Dock = DockStyle.Left;
             panelLateral.Location = new Point(0, 0);
             panelLateral.Name = "panelLateral";
-            panelLateral.Size = new Size(200, 410);
+            panelLateral.Size = new Size(200, 498);
             panelLateral.TabIndex = 1;
             // 
             // panelMenuFechamentosFinais
@@ -235,7 +283,7 @@
             panelFechamentoDia.Dock = DockStyle.Fill;
             panelFechamentoDia.Location = new Point(200, 0);
             panelFechamentoDia.Name = "panelFechamentoDia";
-            panelFechamentoDia.Size = new Size(579, 410);
+            panelFechamentoDia.Size = new Size(579, 498);
             panelFechamentoDia.TabIndex = 0;
             // 
             // btnFecharSemana
@@ -322,7 +370,7 @@
             // 
             // TelaInicial
             // 
-            ClientSize = new Size(779, 410);
+            ClientSize = new Size(779, 498);
             Controls.Add(panelFechamentoDia);
             Controls.Add(panelLateral);
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -332,6 +380,7 @@
             Text = "Fechamento de Caixa";
             FormClosing += TelaInicial_FormClosing;
             panelMenuMotoqueiros.ResumeLayout(false);
+            panelMenuVales.ResumeLayout(false);
             panelLateral.ResumeLayout(false);
             panelMenuFechamentosFinais.ResumeLayout(false);
             panelMenuFechamentos.ResumeLayout(false);
@@ -348,14 +397,14 @@
         private Button btnDeletarMotoqueiro;
         private Button btnBuscarMotoqueiro;
         private Button btnVales;
-
+        private Panel panelMenuVales;
+        private Button btnAdicionarVale;
+        private Button btnRemoverVale;
+        private Button btnVerificarVales;
         private Panel panelFechamentoDia;
         private Panel panelMenuMotoqueiros;
-
         private Label label1;
-
         private DateTimePicker dateTimePicker1;
-
         private DataGridView dgvFechamentoDia;
         private Panel panelLateral;
         private Button btnFechamentosDiarios;

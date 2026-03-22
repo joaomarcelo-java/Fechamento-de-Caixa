@@ -93,35 +93,6 @@ namespace FechamentoCaixa.Service
         }
 
         // =========================
-        // VALES
-        // =========================
-        public decimal ObterValeMotoqueiro(int idMotoqueiro)
-        {
-            return _db.GetVale(idMotoqueiro);
-        }
-        public void AdicionarValeMotoqueiro(int idMotoqueiro, decimal valor)
-        {
-            if (valor < 0)
-                throw new ValeValorNegativoException();
-            _db.AddVale(idMotoqueiro, valor);
-        }
-        public void RemoverValeMotoqueiro(int idMotoqueiro, decimal valor)
-        {
-            if (valor < 0)
-                throw new ValeValorNegativoException();
-            if (valor > _db.GetVale(idMotoqueiro))
-                throw new ValorDescontadoMaiorQueValeException();
-            _db.RemoveVale(idMotoqueiro, valor);
-        }
-
-        public void SetValeMotoqueiro(int idMotoqueiro, decimal valor)
-        {
-            if (valor < 0)
-                throw new ValeValorNegativoException();
-            _db.SetVale(idMotoqueiro, valor);
-        }
-
-        // =========================
         // ENTREGAS
         // =========================
         public int TotalEntregasDe5(int idMotoqueiro)

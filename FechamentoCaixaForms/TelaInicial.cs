@@ -21,63 +21,81 @@ namespace FechamentoCaixaForms
             CarregarFechamentoDia();
         }
 
-        // =========================
-        // MENU MOTOQUEIROS
-        // =========================
-        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        private void TelaInicial_FormClosing(object sender, FormClosingEventArgs e)
         {
-            CarregarFechamentoDia();
+            using var db = new GerenciadorDatabase();
+            db.CriarBackup();
         }
         private void btnMotoqueiros_Click(object sender, EventArgs e)
         {
-            panelMenuFechamentos.Visible = false;
-            panelMenuFechamentosFinais.Visible = false;
+            FecharMenus(exceto: panelMenuMotoqueiros);
             panelMenuMotoqueiros.Visible = !panelMenuMotoqueiros.Visible;
         }
 
         private void btnCadastrarMotoqueiro_Click(object sender, EventArgs e)
         {
             using var db = new GerenciadorDatabase();
-            var service = new MotoqueiroService(db);
-            new TelaCadastroMotoqueiro(service).ShowDialog();
+            new TelaCadastroMotoqueiro(new MotoqueiroService(db)).ShowDialog();
         }
 
         private void btnEditarMotoqueiro_Click(object sender, EventArgs e)
         {
             using var db = new GerenciadorDatabase();
-            var service = new MotoqueiroService(db);
-            new TelaEditarMotoqueiro(service).ShowDialog();
+            new TelaEditarMotoqueiro(new MotoqueiroService(db)).ShowDialog();
         }
 
         private void btnDeletarMotoqueiro_Click(object sender, EventArgs e)
         {
             using var db = new GerenciadorDatabase();
-            var service = new MotoqueiroService(db);
-            new TelaDeletarMotoqueiro(service).ShowDialog();
+            new TelaDeletarMotoqueiro(new MotoqueiroService(db)).ShowDialog();
         }
 
         private void btnBuscarMotoqueiro_Click(object sender, EventArgs e)
         {
             using var db = new GerenciadorDatabase();
-            var service = new MotoqueiroService(db);
-            new TelaBuscarMotoqueiro(service).ShowDialog();
+            new TelaBuscarMotoqueiro(new MotoqueiroService(db), new ValesService(db)).ShowDialog();
         }
-        // =========================
-        // MENU FECHAMENTOS DIARIOS
-        // =========================
+
+
+        private void btnVales_Click(object sender, EventArgs e)
+        {
+            FecharMenus(exceto: panelMenuVales);
+            panelMenuVales.Visible = !panelMenuVales.Visible;
+        }
+
+        private void btnAdicionarVale_Click(object sender, EventArgs e)
+        {
+            using var db = new GerenciadorDatabase();
+            var motoqueiroService = new MotoqueiroService(db);
+            var valesService = new ValesService(db);
+            new TelaAdicionarVale(motoqueiroService, valesService).ShowDialog();
+        }
+
+        private void btnRemoverVale_Click(object sender, EventArgs e)
+        {
+            using var db = new GerenciadorDatabase();
+            var motoqueiroService = new MotoqueiroService(db);
+            var valesService = new ValesService(db);
+            new TelaDescontarVales(motoqueiroService, valesService).ShowDialog();
+        }
+        private void btnVerificarVales_Click(object sender, EventArgs e)
+        {
+            using var db = new GerenciadorDatabase();
+            var motoqueiroService = new MotoqueiroService(db);
+            var valesService = new ValesService(db);
+            new TelaVerificarVales(motoqueiroService, valesService).ShowDialog();
+        }
+
         private void btnFechamentosDiarios_Click(object sender, EventArgs e)
         {
-            panelMenuMotoqueiros.Visible = false;
-            panelMenuFechamentosFinais.Visible = false;
+            FecharMenus(exceto: panelMenuFechamentos);
             panelMenuFechamentos.Visible = !panelMenuFechamentos.Visible;
         }
 
         private void btnEditarFechamentoDiario_Click(object sender, EventArgs e)
         {
             using var db = new GerenciadorDatabase();
-            var motoService = new MotoqueiroService(db);
-            var fechamentoService = new FechamentoDiaService(db);
-            var tela = new TelaEditarFechamentoDiario(motoService, fechamentoService);
+            var tela = new TelaEditarFechamentoDiario(new MotoqueiroService(db), new FechamentoDiaService(db));
             if (tela.ShowDialog() == DialogResult.OK)
                 CarregarFechamentoDia();
         }
@@ -85,27 +103,41 @@ namespace FechamentoCaixaForms
         private void btnDeletarFechamentoDiario_Click(object sender, EventArgs e)
         {
             using var db = new GerenciadorDatabase();
-            var motoService = new MotoqueiroService(db);
-            var fechamentoService = new FechamentoDiaService(db);
-            var tela = new TelaDeletarFechamentoDiario(motoService, fechamentoService);
+            var tela = new TelaDeletarFechamentoDiario(new MotoqueiroService(db), new FechamentoDiaService(db));
             if (tela.ShowDialog() == DialogResult.OK)
                 CarregarFechamentoDia();
         }
 
-        // =========================
-        // FECHAMENTO DIA
-        // =========================
+
+        private void btnFechamentosFinais_Click(object sender, EventArgs e)
+        {
+            FecharMenus(exceto: panelMenuFechamentosFinais);
+            panelMenuFechamentosFinais.Visible = !panelMenuFechamentosFinais.Visible;
+        }
+
+        private void btnBuscarFechamentosFinais_Click(object sender, EventArgs e)
+        {
+            using var db = new GerenciadorDatabase();
+            new TelaExportarFechamentoFinal(new FechamentoFinalService(db)).ShowDialog();
+        }
+
+        private void btnDeletarFechamentoFinal_Click(object sender, EventArgs e)
+        {
+            using var db = new GerenciadorDatabase();
+            new TelaDeletarFechamentoFinal(new FechamentoFinalService(db)).ShowDialog();
+        }
+
+        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        {
+            CarregarFechamentoDia();
+        }
+
         private void btnAdicionarFechamento_Click(object sender, EventArgs e)
         {
             using var db = new GerenciadorDatabase();
-            var motoService = new MotoqueiroService(db);
-            var fechamentoService = new FechamentoDiaService(db);
-
-            var tela = new TelaFechamentoMotoqueiro(motoService, fechamentoService);
-
+            var tela = new TelaFechamentoMotoqueiro(new MotoqueiroService(db), new FechamentoDiaService(db));
             if (tela.ShowDialog() == DialogResult.OK)
                 CarregarFechamentoDia();
-
         }
 
         private void btnAtualizarFechamentoDiario_Click(object sender, EventArgs e)
@@ -116,60 +148,20 @@ namespace FechamentoCaixaForms
         private void btnFecharSemana_Click(object sender, EventArgs e)
         {
             using var db = new GerenciadorDatabase();
-            var fechamentoFinal = new FechamentoFinalService(db);
-            var motoService = new MotoqueiroService(db);
-
-            new TelaFecharSemana(fechamentoFinal, motoService).ShowDialog();
+            new TelaFecharSemana(new FechamentoFinalService(db), new MotoqueiroService(db), new ValesService(db)).ShowDialog();
         }
-
-        private void btnVales_Click(object sender, EventArgs e)
+        private void CarregarFechamentoDia()
         {
             using var db = new GerenciadorDatabase();
-            var service = new MotoqueiroService(db);
-            new TelaVerValesMotoqueiro(service).ShowDialog();
-        }
-        // =========================
-        // MENU FECHAMENTOS FINAIS
-        // =========================
-        private void btnFechamentosFinais_Click(object sender, EventArgs e)
-        {
-            panelMenuMotoqueiros.Visible = false;
-            panelMenuFechamentos.Visible = false;
-            panelMenuFechamentosFinais.Visible = !panelMenuFechamentosFinais.Visible;
-        }
-        private void btnBuscarFechamentosFinais_Click(object sender, EventArgs e)
-        {
-            using var db = new GerenciadorDatabase();
-            var service = new FechamentoFinalService(db);
-            new TelaExportarFechamentoFinal(service).ShowDialog();
-
-
-        }
-        private void btnDeletarFechamentoFinal_Click(object sender, EventArgs e)
-        {
-            using var db = new GerenciadorDatabase();
-            var service = new FechamentoFinalService(db);
-            new TelaDeletarFechamentoFinal(service).ShowDialog();
+            var data = DateOnly.FromDateTime(dateTimePicker1.Value);
+            dgvFechamentoDia.DataSource = new FechamentoDiaService(db).ObterFechamentosDoDiaModel(data);
         }
 
-        // =========================
-        // GRID
-        // =========================
         private void ConfigurarGrid()
         {
             dgvFechamentoDia.AutoGenerateColumns = false;
         }
 
-        private void CarregarFechamentoDia()
-        {
-            var data = DateOnly.FromDateTime(dateTimePicker1.Value);
-
-            using var db = new GerenciadorDatabase();
-            var fechamentoService = new FechamentoDiaService(db);
-
-            dgvFechamentoDia.DataSource =
-                fechamentoService.ObterFechamentosDoDiaModel(data);
-        }
         private void CriarColunas()
         {
             dgvFechamentoDia.AutoGenerateColumns = false;
@@ -180,39 +172,33 @@ namespace FechamentoCaixaForms
                 HeaderText = "Motoqueiro",
                 DataPropertyName = "Motoqueiro"
             });
-
             dgvFechamentoDia.Columns.Add(new DataGridViewTextBoxColumn
             {
                 HeaderText = "Entrega 5",
                 DataPropertyName = "Entrega5"
             });
-
             dgvFechamentoDia.Columns.Add(new DataGridViewTextBoxColumn
             {
                 HeaderText = "Entrega 7",
                 DataPropertyName = "Entrega7"
             });
-
             dgvFechamentoDia.Columns.Add(new DataGridViewTextBoxColumn
             {
                 HeaderText = "Entrega 10",
                 DataPropertyName = "Entrega10"
             });
-
             dgvFechamentoDia.Columns.Add(new DataGridViewTextBoxColumn
             {
                 HeaderText = "Descontos",
                 DataPropertyName = "Descontos",
                 DefaultCellStyle = new DataGridViewCellStyle { Format = "C2" }
             });
-
             dgvFechamentoDia.Columns.Add(new DataGridViewTextBoxColumn
             {
                 HeaderText = "Fixo",
                 DataPropertyName = "ValorFixo",
                 DefaultCellStyle = new DataGridViewCellStyle { Format = "C2" }
             });
-
             dgvFechamentoDia.Columns.Add(new DataGridViewTextBoxColumn
             {
                 HeaderText = "Total",
@@ -224,10 +210,12 @@ namespace FechamentoCaixaForms
                 }
             });
         }
-        private void TelaInicial_FormClosing(object sender, FormClosingEventArgs e)
+        private void FecharMenus(Panel exceto)
         {
-            using var db = new GerenciadorDatabase();
-            db.CriarBackup();
+            if (panelMenuMotoqueiros != exceto) panelMenuMotoqueiros.Visible = false;
+            if (panelMenuVales != exceto) panelMenuVales.Visible = false;
+            if (panelMenuFechamentos != exceto) panelMenuFechamentos.Visible = false;
+            if (panelMenuFechamentosFinais != exceto) panelMenuFechamentosFinais.Visible = false;
         }
     }
 }
